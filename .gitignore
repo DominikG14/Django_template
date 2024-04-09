@@ -1,5 +1,5 @@
 venv
-#.env TODO: uncomment this!
+.env
 project/db.sqlite3
 project/media/*
 project/logs/*
