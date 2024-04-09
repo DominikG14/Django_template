@@ -3,11 +3,12 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 # Authentication imports
 from django.contrib import auth
 from django.contrib.auth import get_user_model
-from tokens import account_activation_token
+from django.contrib.auth.decorators import login_required
 
 # Activation imports
-from django.utils.encoding import force_str  
-from django.utils.http import urlsafe_base64_decode 
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from .tokens import account_activation_token
 
 # Views imports
 from django.shortcuts import render, redirect
@@ -17,7 +18,6 @@ from . import urls, forms
 
 def login(request: HttpRequest) -> HttpResponse:
     template = get_template(app=urls.app_name)
-    context = {}
 
     if request.method == 'GET':
         form = forms.LoginForm()
@@ -31,50 +31,51 @@ def login(request: HttpRequest) -> HttpResponse:
             )
             if user:
                 auth.login(request, user)
-                return redirect('') #TODO: Add after login destination
-    
-    context['form'] = form
-    return render(request, template, context)
+                return redirect('/') #TODO: Add after login destination
+
+    return render(request, template, {
+        'form': form
+    })
 
 
 def register(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
     template = get_template(app=urls.app_name)
-    context = {}
 
     if request.method == 'GET':
         form = forms.RegisterForm()
 
     if request.method == 'POST': 
-            form = forms.RegisterForm(request.POST)
-            if form.is_valid():
-                form.send_email_activation(request)
-                request.session['activation'] = True
-                return redirect('accounts:activation_send')
+        form = forms.RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.send_email_activation(request)
+            request.session['activation'] = True
+            return redirect('accounts:activation_send', to_email=user.email)
 
-    context['form'] = form
-    return render(request, template, context)
+    return render(request, template, {
+        'form': form
+    })
 
 
+@login_required
 def logout(request):
     auth.logout(request)
     return redirect('accounts:login')
 
 
-def activation_send(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
+def activation_send(request: HttpRequest, to_email: str) -> HttpResponse | HttpResponseRedirect:
     if request.session.get('activation') == False:
         return redirect('accounts:login')
 
     template = get_template(app=urls.app_name)
-    context = {}
+    return render(request, template, {
+        'to_email': to_email,
+    })
 
-    return render(request, template, context)
 
-
-def activate(request: HttpRequest, uidb64, token) -> HttpResponseRedirect:
+def activate(request: HttpRequest, uidb64: str, token: str) -> HttpResponseRedirect:
     if request.session.get('activation') == False:
         return redirect('accounts:login')
     
-    request.session['activation'] = False
     User = get_user_model()
 
     try:
@@ -83,28 +84,124 @@ def activate(request: HttpRequest, uidb64, token) -> HttpResponseRedirect:
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    if user is not None and account_activation_token.check_token(user, token):
+    if user and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect('accounts:activation_succes')
+        return redirect('accounts:activation_success')
     return redirect('accounts:activation_fail')
 
 
-def activation_succes(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
+def activation_success(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
     if request.session.get('activation') == False:
         return redirect('accounts:login')
 
+    request.session['activation'] = False
     template = get_template(app=urls.app_name)
-    context = {}
 
-    return render(request, template, context)
+    return render(request, template)
 
 
 def activation_fail(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
     if request.session.get('activation') == False:
         return redirect('accounts:login')
 
+    request.session['activation'] = False
     template = get_template(app=urls.app_name)
-    context = {}
 
-    return render(request, template, context)
+    return render(request, template)
+
+
+@login_required
+def change_password(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
+    template = get_template(app=urls.app_name)
+    user = request.user
+
+    if request.method == 'GET':
+        form = forms.ChangePasswordForm(user)
+
+    if request.method == 'POST':
+        form = forms.ChangePasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:login')
+
+    return render(request, template, {
+        'form': form
+    })
+
+
+def reset_password(request: HttpRequest) -> HttpResponse:
+    template = get_template(app=urls.app_name)
+    if request.method == 'GET':
+        form = forms.PasswordResetForm()
+
+    if request.method == 'POST':
+        form = forms.PasswordResetForm(request.POST)
+        if form.is_valid():
+            user = form.send_password_reset(request)
+            request.session['reset'] = True
+            return redirect('accounts:reset_password_send', to_email=user.email)
+
+
+    return render(request, template, {
+        'form': form,
+    })
+
+
+def reset(request: HttpRequest, uidb64: str, token: str) -> HttpResponse | HttpResponseRedirect:
+    if request.session.get('reset') == False:
+        return redirect('accounts:login')
+    
+    User = get_user_model()
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if request.method == 'GET':
+        form = forms.ChangePasswordForm(user)
+
+    if request.method == 'POST':
+        if user and account_activation_token.check_token(user, token):
+            form = forms.ChangePasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('accounts:reset_password_success')
+        return redirect('accounts:reset_password_fail')
+    
+    template = get_template(app=urls.app_name)
+    return render(request, template, {
+        'form': form,
+    })
+
+
+def reset_password_send(request: HttpRequest, to_email: str) -> HttpResponse | HttpResponseRedirect:
+    if request.session.get('reset') == False:
+        return redirect('accounts:login')
+
+    template = get_template(app=urls.app_name)
+    return render(request, template, {
+        'to_email': to_email,
+    })
+
+
+def reset_password_success(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
+    if request.session.get('reset') == False:
+        return redirect('accounts:login')
+
+    request.session['reset'] = False
+    template = get_template(app=urls.app_name)
+
+    return render(request, template)
+
+
+def reset_password_fail(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
+    if request.session.get('reset') == False:
+        return redirect('accounts:login')
+
+    request.session['reset'] = False
+    template = get_template(app=urls.app_name)
+
+    return render(request, template)
