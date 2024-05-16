@@ -16,6 +16,8 @@ from utils.views import get_template
 from . import urls, forms
 
 
+
+# Authentication
 def login(request: HttpRequest) -> HttpResponse:
     template = get_template(app=urls.app_name)
 
@@ -38,6 +40,13 @@ def login(request: HttpRequest) -> HttpResponse:
     })
 
 
+@login_required
+def logout(request):
+    auth.logout(request)
+    return redirect('accounts:login')
+
+
+# Activation
 def register(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
     template = get_template(app=urls.app_name)
 
@@ -54,12 +63,6 @@ def register(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
     return render(request, template, {
         'form': form
     })
-
-
-@login_required
-def logout(request):
-    auth.logout(request)
-    return redirect('accounts:login')
 
 
 def activation_send(request: HttpRequest, to_email: str) -> HttpResponse | HttpResponseRedirect:
@@ -111,6 +114,7 @@ def activation_fail(request: HttpRequest) -> HttpResponse | HttpResponseRedirect
     return render(request, template)
 
 
+# Password management
 @login_required
 def change_password(request: HttpRequest) -> HttpResponse | HttpResponseRedirect:
     template = get_template(app=urls.app_name)
@@ -148,6 +152,16 @@ def reset_password(request: HttpRequest) -> HttpResponse:
     })
 
 
+def reset_password_send(request: HttpRequest, to_email: str) -> HttpResponse | HttpResponseRedirect:
+    if request.session.get('reset') == False:
+        return redirect('accounts:login')
+
+    template = get_template(app=urls.app_name)
+    return render(request, template, {
+        'to_email': to_email,
+    })
+
+
 def reset(request: HttpRequest, uidb64: str, token: str) -> HttpResponse | HttpResponseRedirect:
     if request.session.get('reset') == False:
         return redirect('accounts:login')
@@ -174,16 +188,6 @@ def reset(request: HttpRequest, uidb64: str, token: str) -> HttpResponse | HttpR
     template = get_template(app=urls.app_name)
     return render(request, template, {
         'form': form,
-    })
-
-
-def reset_password_send(request: HttpRequest, to_email: str) -> HttpResponse | HttpResponseRedirect:
-    if request.session.get('reset') == False:
-        return redirect('accounts:login')
-
-    template = get_template(app=urls.app_name)
-    return render(request, template, {
-        'to_email': to_email,
     })
 
 
