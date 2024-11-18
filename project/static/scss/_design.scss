@@ -1,0 +1,83 @@
+// |PADDING
+@mixin TopBottom_Padding($value){
+  padding-top: $value;
+  padding-bottom: $value;
+}
+
+@mixin LeftRight_Padding($value){
+  padding-left: $value;
+  padding-right: $value;
+}
+
+// |MARGIN
+@mixin TopBottom_Margin($value){
+  margin-top: $value;
+  margin-bottom: $value;
+}
+
+@mixin LeftRight_Margin($value){
+  margin-left: $value;
+  margin-right: $value;
+}
+
+// |BORDER
+@mixin RightSide_BorderRadius($radius){
+  border-top-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+}
+
+@mixin TopSide_BorderRadius($radius){
+  border-top-right-radius: $radius;
+  border-top-left-radius: $radius;
+}
+
+@mixin LeftSide_BorderRadius($radius){
+  border-top-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+}
+
+@mixin BottomSide_BorderRadius($radius){
+  border-bottom-right-radius: $radius;
+  border-bottom-left-radius: $radius;
+}
+
+
+// |TEXT
+@mixin CenterText(){
+  display: flex;
+  align-items: center;
+}
+
+// |LAYOUT
+@mixin ColumnLayout(){
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin RowLayout($reverse: false){
+  display: flex;
+
+  @if $reverse {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+  }
+}
+
+
+// |PLACEMENT
+@mixin CenterInside(){
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin FitContentInside(){
+  width: fit-content;
+  height: fit-content;
+}
+
+
+// |ANIMATIONS
+@mixin Transition($time: 300ms, $type: ease-in-out){
+  transition: $time $type;
+}
