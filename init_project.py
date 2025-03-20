@@ -4,7 +4,7 @@ import sys
 
 
 ENV_CONTENT = """# MUST BE SET TO RUN PROJECT
-SECRET_KEY=""
+SECRET_KEY="a"
 
 # Email
 EMAIL=""

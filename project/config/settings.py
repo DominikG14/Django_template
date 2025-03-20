@@ -1,6 +1,14 @@
+from django.template import base
+
 from pathlib import Path
 from dotenv import load_dotenv
-import sys, os
+import sys
+import os
+import re
+
+
+# Multiline span for django tags
+base.tag_re = re.compile(base.tag_re.pattern, re.DOTALL)
 
 
 # Setup
