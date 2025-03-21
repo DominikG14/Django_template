@@ -8,22 +8,45 @@ const {
   CSS_DIRS_PATH, 
 } = require('./_const');
 
+
+/**
+ * Generates an SCSS import statement for a given app.
+ * @param {string} appName - The name of the app.
+ * @returns {string} The SCSS import statement.
+ */
 function getAppScssImport(appName){
   return `@use "${appName}_scss" as *;`
 }
 
+/**
+ * Constructs the SCSS directory path for a given app.
+ * @param {string} appName - The name of the app.
+ * @returns {string} The full SCSS directory path.
+ */
 function getAppScssDirPath(appName){
   return `${STATIC_PATH}/${appName}/scss`
 }
 
-function getAppData(scssFile){
-  const parts = scssFile.split(/[/\\]/); // Split path by '/' or '\'
+/**
+ * Extracts SCSS file metadata, including the app name and whether it's the app specific SCSS file.
+ * @param {string} scssFile - The full file path of the SCSS file.
+ * @returns {Object} An object containing:
+ *  - `path` {string}: The normalized file path.
+ *  - `appName` {string}: The app name (directory before "scss")
+ *  - `isAppScssFile` {boolean}: Whether the file is the app specific SCSS file.
+ */
+function getScssFileData(scssFile){
+  const path = scssFile.replaceAll('\\', '/');
+  const parts = path.split('/');
+  
   const scssIndex = parts.indexOf("scss");
   const appName = scssIndex > 0 ? parts[scssIndex - 1] : null; // Get the directory before "scss"
   
-  return { scssPath: scssFile, appName }; // Return an object with both values
-}
+  const appScss = getAppScssDirPath(appName) + `/${appName}_scss`;
+  const isAppScssFile = path.includes(appScss);
 
+  return { path, appName, isAppScssFile };
+}
 
 /**
  * Compiles SCSS to CSS
@@ -31,7 +54,7 @@ function getAppData(scssFile){
  * @returns {void} No return value
  */
 function compileScss(scssDir){
-  const { scssPath, appName } = getAppData(scssDir);
+  const { scssPath, appName } = getScssFileData(scssDir);
 
   const globalScss = getAppScssDirPath('global');
   const appScss = getAppScssDirPath(appName);
@@ -44,11 +67,10 @@ function compileScss(scssDir){
 /**
  * Starts watching and compiles SCSS to CSS at every change
  * @param {string} scssDir - Path to the app SCSS directory
- * @param {string} appName - Name of the app
  * @returns {void} No return value
  */
-function watchSass(scssDir){
-  const { scssPath, appName } = getAppData(scssDir);
+function watchScss(scssDir){
+  const { scssPath, appName } = getScssFileData(scssDir);
 
   const globalScss = getAppScssDirPath('global');
   const appScss = getAppScssDirPath(appName);
@@ -62,25 +84,30 @@ function watchSass(scssDir){
  * Adds global and app SCSS files imports at the top of the file.
  * If the imports are already there leaves the file unchanged.
  * @param {string} scssFile - Path to the SCSS file
- * @param {string} appName - Name of the app
  * @returns {void} No return value
  */
 function importScss(scssFile) {
-  const { scssPath, appName } = getAppData(scssFile);
+  const scssData = getScssFileData(scssFile);
 
   // Do not add imports to global scss files
-  if(appName === 'global') return;
+  if(scssData.appName === 'global') return;
+  // Do not add imports to '_index.scss' files
+  if(scssData.path.endsWith('_index.scss')) return;
 
   const globalImport = getAppScssImport('global');
-  const appImport = getAppScssImport(appName);
+  const appImport = getAppScssImport(scssData.appName);
 
-  fs.readFile(scssPath, 'utf8', (err, data) => {
+  fs.readFile(scssData.path, 'utf8', (err, data) => {
     // Check if import is already at the top
     if (data.startsWith(globalImport)) return;
 
     // Combine the imports to be added with the current content
-    const newData = `${globalImport}\n${appImport}\n${data}`;
-    fs.writeFile(scssPath, newData, 'utf8', (err) => {});
+    let newData = `${globalImport}`;
+    // If scss is an app specific, this prevents circular import
+    if(!scssData.isAppScssFile) newData += `\n${appImport}`
+    newData += `\n${data}`
+
+    fs.writeFile(scssData.path, newData, 'utf8', (err) => {});
   });
 }
 
@@ -90,7 +117,7 @@ module.exports = {
   SCSS_FILES_PATH,
   SCSS_DIRS_PATH,
   CSS_DIRS_PATH,
-  watchSass,
+  watchScss,
   compileScss,
   importScss,
 };

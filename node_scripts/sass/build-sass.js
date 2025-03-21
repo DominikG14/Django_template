@@ -11,7 +11,6 @@ const { SCSS_DIRS_PATH, compileScss } = require('./_sass');
 
 // Retrives every SASS directory in project
 const scssDirs = glob.sync(SCSS_DIRS_PATH);
-console.log(scssDirs)
 
 // Compiles each retrived SCSS file to CSS
 scssDirs.forEach((scssDir) => compileScss(scssDir));
