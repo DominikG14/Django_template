@@ -5,8 +5,7 @@
     "sass:build": "node node_scripts/sass/build-sass.js",
     "sass:watch": "node node_scripts/sass/watch-sass.js",
     "sass:import": "node node_scripts/sass/import-sass.js",
-    "sass:test": "node node_scripts/sass/test.js",
-    "sass": "npm run sass:watch"
+    "sass": "npm run sass:import && npm run sass:watch"
   },
   "keywords": [],
   "author": "",
