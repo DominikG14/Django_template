@@ -1,0 +1,15 @@
+@mixin Transition($time: 300ms, $type: ease-in-out){
+  transition: $time $type;
+}
+
+@mixin Highlight-Text($color: white, $y: 1px, $x: 1px, $blur-radius: .5rem ){
+  text-shadow: $y $x $blur-radius $color;
+}
+
+@mixin Highlight-Box($color: white, $y: 1px, $x: 1px, $blur-radius: .5rem) {
+  box-shadow: $x $y $blur-radius $color;
+}
+
+// @mixin Highlight($color: white, $y: 1px, $x: 1px, $blur-radius: .5rem ){
+//   filter: drop-shadow($y $x $blur-radius $color);
+// }

@@ -12,7 +12,7 @@ from .tokens import account_activation_token
 
 # Views
 from django.shortcuts import render, redirect
-from utils.views import get_template, session_required
+from project.utils.views import get_template, session_required
 from . import urls, forms
 
 

@@ -75,3 +75,25 @@
     justify-content: center;
   }
 }
+
+// Move
+@mixin Move($x: 0, $y: 0){
+  position: relative;
+  left: $x;
+  bottom: $y;
+}
+
+@mixin CenterContent($x: false, $y: false){
+  display: flex;
+  @if not $x and not $y {
+    justify-content: center;
+    align-items: center;
+  }
+
+  @if $x {
+    align-items: center;
+  }
+  @if $y {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,5 @@
+@use "colors";
+
+@mixin globalRoot {
+  @include colors.globalColors();
+}
