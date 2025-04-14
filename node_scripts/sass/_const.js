@@ -1,14 +1,14 @@
 /**
- * Path to static files
- * @type {string}
- */
-const STATIC_PATH = 'project/static';
+ * @fileoverview Const variables for sass compiling.
+ * @version 1.1.0
+ * @date 2025-14-04
+ */ 
 
 /**
  * Path to SCSS directories
  * @type {string}
  */
-const SCSS_DIRS_PATH = `${STATIC_PATH}/*/scss`;
+const SCSS_DIRS_PATH = `apps/**/scss`;
 
 /**
  * Path to compiled CSS directories (Relitve to 'scss' directory)
@@ -24,7 +24,6 @@ const SCSS_FILES_PATH = `${SCSS_DIRS_PATH}/**/*.scss`;
 
 
 module.exports = { 
-  STATIC_PATH,
   SCSS_DIRS_PATH,
   CSS_DIRS_PATH,
   SCSS_FILES_PATH,

@@ -1,3 +1,5 @@
+@use "global_scss" as *;
+@use "project_scss" as *;
 * {
   box-sizing: border-box;
   padding: 0;

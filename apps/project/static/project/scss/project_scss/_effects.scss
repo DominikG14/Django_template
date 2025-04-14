@@ -1,3 +1,4 @@
+@use "global_scss" as *;
 @mixin Transition($time: 300ms, $type: ease-in-out){
   transition: $time $type;
 }

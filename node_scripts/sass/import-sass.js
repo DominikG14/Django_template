@@ -1,5 +1,5 @@
 /**
- * @fileoverview Adds import statement for global scss styles to appropriate *.scss files in project.
+ * @fileoverview Adds import statement for global scss styles to appropriate *.scss files in project
  * @version 1.1.0
  * @date 2025-03-20
  */ 

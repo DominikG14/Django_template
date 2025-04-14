@@ -1,3 +1,4 @@
+@use "global_scss" as *;
 @mixin CoverBackgroundImage(){
   object-fit: cover;
   background-size: cover;

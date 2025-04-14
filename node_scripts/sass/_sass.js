@@ -1,8 +1,13 @@
+/**
+ * @fileoverview Search functionality for locating *.scss files to watch and build.
+ * @version 1.3.0
+ * @date 2025-14-04
+ */ 
+
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { 
-  STATIC_PATH,
   SCSS_FILES_PATH, 
   SCSS_DIRS_PATH, 
   CSS_DIRS_PATH, 
@@ -24,7 +29,7 @@ function getAppScssImport(appName){
  * @returns {string} The full SCSS directory path.
  */
 function getAppScssDirPath(appName){
-  return `${STATIC_PATH}/${appName}/scss`
+  return `apps/${appName}/static/${appName}/scss`
 }
 
 /**
@@ -113,7 +118,6 @@ function importScss(scssFile) {
 
 
 module.exports = { 
-  STATIC_PATH,
   SCSS_FILES_PATH,
   SCSS_DIRS_PATH,
   CSS_DIRS_PATH,
