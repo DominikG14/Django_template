@@ -1,0 +1,100 @@
+@use "global_scss" as *;
+// Grid
+@mixin GridLayout {
+  display: grid;
+
+  @content;
+}
+
+/// Generates CSS 'grid-area' property for child elements based on a provided list of grid areas.
+///
+/// @param {List} $grid-areas - A list of grid area names.
+/// @example
+///   @include GridAreas("header", "main", "sidebar", "footer");
+///
+///   /* Generates */
+///   & > .header  { grid-area: header; }
+///   & > .main    { grid-area: main; }
+///   & > .sidebar { grid-area: sidebar; }
+///   & > .footer  { grid-area: footer; }
+///
+@mixin GridAreas($grid-areas) {
+  @each $area in $grid-areas {
+    & > .#{$area} {
+      grid-area: #{$area};
+    }
+  }
+}
+
+// Row
+@mixin RowLayout($reverse: false) {
+  display: flex;
+
+  @if $reverse {
+    flex-direction: row-reverse;
+  }
+
+  @content;
+}
+
+@mixin CenterRow($x: false, $y: false){
+  @if not $x and not $y {
+    justify-content: center;
+    align-items: center;
+  }
+
+  @if $x {
+    justify-content: center;
+  }
+  @if $y {
+    align-items: center;
+  }
+}
+
+// Column
+@mixin ColumnLayout($reverse: false) {
+  display: flex;
+  flex-direction: column;
+
+  @if $reverse {
+    flex-direction: column-reverse;
+  }
+
+  @content;
+}
+
+@mixin CenterColumn($x: false, $y: false){
+  @if not $x and not $y {
+    justify-content: center;
+    align-items: center;
+  }
+
+  @if $x {
+    align-items: center;
+  }
+  @if $y {
+    justify-content: center;
+  }
+}
+
+// Move
+@mixin Move($x: 0, $y: 0){
+  position: relative;
+  left: $x;
+  bottom: $y;
+}
+
+@mixin CenterContent($x: false, $y: false){
+  display: flex;
+  @if not $x and not $y {
+    justify-content: center;
+    align-items: center;
+  }
+
+  @if $x {
+    align-items: center;
+  }
+  @if $y {
+    justify-content: center;
+  }
+}

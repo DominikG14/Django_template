@@ -1,8 +1,13 @@
+/**
+ * @fileoverview Search functionality for locating *.scss files to watch and build.
+ * @version 1.3.0
+ * @date 2025-14-04
+ */ 
+
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { 
-  STATIC_PATH,
   SCSS_FILES_PATH, 
   SCSS_DIRS_PATH, 
   CSS_DIRS_PATH, 
@@ -24,7 +29,7 @@ function getAppScssImport(appName){
  * @returns {string} The full SCSS directory path.
  */
 function getAppScssDirPath(appName){
-  return `${STATIC_PATH}/${appName}/scss`
+  return `apps/${appName}/static/${appName}/scss`
 }
 
 /**
@@ -54,13 +59,13 @@ function getScssFileData(scssFile){
  * @returns {void} No return value
  */
 function compileScss(scssDir){
-  const { scssPath, appName } = getScssFileData(scssDir);
+  const scssData = getScssFileData(scssDir);
 
   const globalScss = getAppScssDirPath('global');
-  const appScss = getAppScssDirPath(appName);
+  const appScss = getAppScssDirPath(scssData.appName);
 
-  const stylesDir = path.join(scssPath, CSS_DIRS_PATH);
-  const command = `sass ${scssPath}:${stylesDir} --load-path=${globalScss} --load-path=${appScss} --style=expanded --no-source-map`;
+  const stylesDir = path.join(scssData.path, CSS_DIRS_PATH);
+  const command = `sass ${scssData.path}:${stylesDir} --load-path=${globalScss} --load-path=${appScss} --style=expanded --no-source-map`;
   exec(command);
 }
 
@@ -70,13 +75,13 @@ function compileScss(scssDir){
  * @returns {void} No return value
  */
 function watchScss(scssDir){
-  const { scssPath, appName } = getScssFileData(scssDir);
+  const scssData = getScssFileData(scssDir);
 
   const globalScss = getAppScssDirPath('global');
-  const appScss = getAppScssDirPath(appName);
+  const appScss = getAppScssDirPath(scssData.appName);
 
-  const stylesDir = path.join(scssPath, CSS_DIRS_PATH);
-  const command = `sass --watch ${scssPath}:${stylesDir} --load-path=${globalScss} --load-path=${appScss} --style=expanded --no-source-map`;
+  const stylesDir = path.join(scssData.path, CSS_DIRS_PATH);
+  const command = `sass --watch ${scssData.path}:${stylesDir} --load-path=${globalScss} --load-path=${appScss} --style=expanded --no-source-map`;
   exec(command);
 }
 
@@ -113,7 +118,6 @@ function importScss(scssFile) {
 
 
 module.exports = { 
-  STATIC_PATH,
   SCSS_FILES_PATH,
   SCSS_DIRS_PATH,
   CSS_DIRS_PATH,

@@ -1,0 +1,6 @@
+@use "global_scss" as *;
+@use "colors";
+
+@mixin globalRoot {
+  @include colors.globalColors();
+}

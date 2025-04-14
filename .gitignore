@@ -3,7 +3,6 @@
 /package-lock.json
 __pycache__/
 
-.env
-/project/db.sqlite3
-
-/project/media/*
+/.env
+/db.sqlite3
+*.css
