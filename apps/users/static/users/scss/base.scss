@@ -1,4 +1,5 @@
 @use "project_scss" as *;
+@use "users_scss" as *;
 
 :root {
   @include globalRoot();

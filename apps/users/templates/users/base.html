@@ -1,7 +1,9 @@
 {% extends 'project/base.html' %}
+{% load static %}
 
 
 {% block base_static %}
+  <link rel="stylesheet" href="{% static 'users/styles/base.css' %}">
   {% block static %}
   {% endblock static %}
 {% endblock base_static %}
