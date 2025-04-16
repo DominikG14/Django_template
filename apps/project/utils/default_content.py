@@ -27,10 +27,10 @@ from . import forms
 
 def get_base_html_content(app_name):
     return f'''{{% extends 'project/base.html' %}}
-{{% load static %}}
+{{% load project_static %}}
 
 {{% block base_static %}}
-<link rel="stylesheet" href="{{% static '{app_name}/styles/base.css' %}}">
+{{% style '{app_name}' 'base' %}}
   {{% block static %}}
   {{% endblock static %}}
 {{% endblock base_static %}}
@@ -72,4 +72,10 @@ def get_templatetags_content():
 register = template.Library()
 
 # Register your custom template tags here.
+'''
+
+def get_base_scss_content():
+    return f''':root {{
+  @include globalRoot();
+}}
 '''

@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.simple_tag
-def script(appname: str, script_name: str, defer=True, module=True):
+def script(app_name: str, script_name: str, defer=True, module=True):
     """
     Render a `<script>` tag for including a JavaScript file from an app's `scripts/` directory.
 
@@ -41,12 +41,12 @@ def script(appname: str, script_name: str, defer=True, module=True):
     return format_html(
         '<script {} src="{}"></script>',
         ' '.join(attrs),
-        static(f'{appname}/scripts/{script_name}.js')
+        static(f'{app_name}/scripts/{script_name}.js')
     )
 
 
 @register.simple_tag
-def style(appname: str, style_name: str):
+def style(app_name: str, style_name: str):
     """
     Render a `<link>` tag to include a CSS stylesheet from an app's `styles/` directory.
 
@@ -70,5 +70,5 @@ def style(appname: str, style_name: str):
 
     return format_html(
         '<link rel="stylesheet" href="{}">',
-        static(f'{appname}/styles/{style_name}.css')
+        static(f'{app_name}/styles/{style_name}.css')
     )

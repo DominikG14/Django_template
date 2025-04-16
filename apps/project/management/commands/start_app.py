@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
         # Use the function to get the default content for the templatetags
         with open(os.path.join(templatetags_path, f'{app_name}_components.py'), 'w') as f:
-            f.write(get_templatetags_content())  # No app_name argument anymore
+            f.write(get_templatetags_content())
 
         # Step 4: Create templates directory and app_name base structure with default base.html
         templates_path = os.path.join(app_path, 'templates', app_name)
@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
         # Create base.scss as an empty file
         with open(os.path.join(scss_path, 'base.scss'), 'w') as f:
-            pass  # Empty file
+            f.write(get_base_scss_content())
 
         # Step 6: Create urls.py with default content
         with open(os.path.join(app_path, 'urls.py'), 'w') as f:
