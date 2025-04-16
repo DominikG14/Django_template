@@ -1,4 +1,4 @@
-{% load static %}
+{% load project_static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -7,10 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Template Django Project{% endblock title %}</title>
   
-  <link rel="stylesheet" href="{% static 'project/styles/reset.css' %}">
-  <link rel="stylesheet" href="{% static 'project/styles/base.css' %}">
-
-  <script defer type="module" src="{% static 'project/scripts/color-scheme.js' %}"></script>
+  {% style 'project' 'reset' %}
+  {% style 'project' 'base' %}
+  {% script 'project' 'color-scheme' %}
 
   {% block base_static %}
   {% endblock base_static %}
