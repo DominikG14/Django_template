@@ -47,6 +47,27 @@ def script(appname: str, script_name: str, defer=True, module=True):
 
 @register.simple_tag
 def style(appname: str, style_name: str):
+    """
+    Render a `<link>` tag to include a CSS stylesheet from an app's `styles/` directory.
+
+    Parameters
+    ----------
+    appname : str
+        The name of the Django app containing the `styles/` folder inside its static files.
+    style_name : str
+        The name of the CSS file (without the `.css` extension) to include.
+
+    Returns
+    -------
+    str
+        A formatted HTML `<link>` tag pointing to the specified stylesheet.
+
+    Examples
+    --------
+    >>> {% style 'project' 'theme' %}
+    <link rel="stylesheet" href="/static/project/styles/theme.css">
+    """
+
     return format_html(
         '<link rel="stylesheet" href="{}">',
         static(f'{appname}/styles/{style_name}.css')
