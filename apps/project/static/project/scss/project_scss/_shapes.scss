@@ -1,4 +1,3 @@
-@use "global_scss" as *;
 @mixin SquareShape($side){
   width: $side;
   height: $side;

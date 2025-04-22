@@ -1,6 +1,6 @@
 /**
  * @fileoverview Search functionality for locating *.scss files to watch and build.
- * @version 1.3.0
+ * @version 1.3.1
  * @date 2025-14-04
  */ 
 
@@ -61,7 +61,7 @@ function getScssFileData(scssFile){
 function compileScss(scssDir){
   const scssData = getScssFileData(scssDir);
 
-  const globalScss = getAppScssDirPath('global');
+  const globalScss = getAppScssDirPath('project');
   const appScss = getAppScssDirPath(scssData.appName);
 
   const stylesDir = path.join(scssData.path, CSS_DIRS_PATH);
@@ -77,7 +77,7 @@ function compileScss(scssDir){
 function watchScss(scssDir){
   const scssData = getScssFileData(scssDir);
 
-  const globalScss = getAppScssDirPath('global');
+  const globalScss = getAppScssDirPath('project');
   const appScss = getAppScssDirPath(scssData.appName);
 
   const stylesDir = path.join(scssData.path, CSS_DIRS_PATH);
@@ -95,11 +95,11 @@ function importScss(scssFile) {
   const scssData = getScssFileData(scssFile);
 
   // Do not add imports to global scss files
-  if(scssData.appName === 'global') return;
+  if(scssData.appName === 'project') return;
   // Do not add imports to '_index.scss' files
   if(scssData.path.endsWith('_index.scss')) return;
 
-  const globalImport = getAppScssImport('global');
+  const globalImport = getAppScssImport('project');
   const appImport = getAppScssImport(scssData.appName);
 
   fs.readFile(scssData.path, 'utf8', (err, data) => {

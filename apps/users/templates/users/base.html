@@ -1,7 +1,9 @@
 {% extends 'project/base.html' %}
+{% load project_static %}
 
 
 {% block base_static %}
+  {% style 'users' 'base' %}
   {% block static %}
   {% endblock static %}
 {% endblock base_static %}
